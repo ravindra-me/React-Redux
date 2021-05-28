@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Counter App</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.1.0/redux.js"
+      integrity="sha512-tqb5l5obiKEPVwTQ5J8QJ1qYaLt+uoXe1tbMwQWl6gFCTJ5OMgulwIb3l2Lu7uBqdlzRf5yBOAuLL4+GkqbPPw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <h1>0</h1>
+    <div>
+      <h3>Steps</h3>
+      <div class="steps">
+        <button class="step-5" data-value="5">5</button>
+        <button class="step-10" data-value="10">10</button>
+        <button class="step-15" data-value="15">15</button>
+      </div>
+      <h3>Max Value</h3>
+      <div class="max">
+        <button class="max-15" data-max="15">15</button>
+        <button class="max-100" data-max="100">100</button>
+        <button class="max-200" data-max="200">200</button>
+      </div>
+    </div>
+    <div>
+      <button class="increment">Increment</button>
+      <button class="decrement">Decrement</button>
+      <button class="reset">Reset</button>
+    </div>
+    <script src="./index.js"></script>
+  </body>
+</html>
