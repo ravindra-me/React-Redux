@@ -1,86 +1,70 @@
-const increment = document.querySelector(".increment");
-const decrement = document.querySelector(".decrement");
-const counter = document.querySelector("h1");
-const reset = document.querySelector(".reset");
-const steps = document.querySelector(".steps");
-const max = document.querySelector(".max");
+let input = document.querySelector(".input");
+let form = document.querySelector("form");
+let todosContainer = document.querySelector(".root-container");
 
-const initialValue = { count: 0, steps: 1, max: Infinity };
+let intialValue = { todos: [{ id: 1234, text: "ravindra", isDone: false }] };
 
-function reducer(preState = initialValue, action) {
+let store = Redux.createStore(reducer);
+
+function reducer(preState = intialValue, action) {
   switch (action.type) {
-    case "increment":
-      if (preState.count + preState.steps <= preState.max) {
-        return { ...preState, count: preState.count + preState.steps };
-      } else {
-        return { ...preState };
-      }
-    case "decrement":
-      return { ...preState, count: preState.count - preState.steps };
-    case "reset":
-      return { ...preState, count: 0 };
-    case "changeStep":
-      return { ...preState, steps: action.value };
-    case "changeMax":
-      return { ...preState, max: action.value };
+    case "add-todo":
+      const newTodo = { id: Date.now(), text: action.value, isDone: false };
+      return { ...preState, todos: preState.todos.concat(newTodo) };
+    case "TOGGLE_DONE":
+      const newTodos = preState.todos.map((e) => {
+        if (e.id === action.id) {
+          e.isDone = !e.isDone;
+          return e;
+        }
+        return e;
+      });
+      return { ...preState, todos: newTodos };
+    case "delete":
+      const updateTodos = preState.todos.filter((e) => e.id !== action.id);
+      return { ...preState, todos: updateTodos };
     default:
       return preState;
   }
 }
 
-function activeClass(activeElem, parentElm) {
-  const parentElmArr = Array.from(parentElm.children);
-  parentElmArr.forEach((e) => e.classList.remove("active"));
-  if (activeElem.localName === "button") {
-    activeElem.classList.add("active");
+const addAction = (value) => {
+  return { type: "add-todo", value: value };
+};
+
+function handleSubmit(event) {
+  event.preventDefault();
+  if (input.value) {
+    store.dispatch(addAction(input.value));
+    input.innerText = "";
   }
 }
 
-const store = Redux.createStore(reducer);
+function createUi() {
+  todosContainer.innerHTML = "";
+  const { todos } = store.getState();
+  todos.forEach((todo) => {
+    const el = document.createElement("li");
+    el.textContent = todo.text;
+    if (todo.isDone) el.style.textDecoration = "line-through";
+    const btn = document.createElement("button");
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerText = "delete";
 
-const incAction = {
-  type: "increment",
-};
+    deleteBtn.addEventListener("click", () =>
+      store.dispatch({ type: "delete", id: todo.id })
+    );
 
-const decAction = {
-  type: "decrement",
-};
-
-const resAction = {
-  type: "reset",
-};
-
-const chnageStep = (value) => {
-  return { type: "changeStep", value: value };
-};
-
-const chnageMax = (value) => {
-  return { type: "changeMax", value: value };
-};
-
-increment.addEventListener("click", () => {
-  store.dispatch(incAction);
-});
-
-decrement.addEventListener("click", () => {
-  store.dispatch(decAction);
-});
-
-reset.addEventListener("click", () => {
-  store.dispatch(resAction);
-});
-
-steps.addEventListener("click", (event) => {
-  store.dispatch(chnageStep(Number(event.target.dataset.value)));
-  activeClass(event.target, event.target.parentElement);
-});
-
-max.addEventListener("click", (event) => {
-  store.dispatch(chnageMax(Number(event.target.dataset.max)));
-  activeClass(event.target, event.target.parentElement);
-});
+    btn.innerText = "Done";
+    btn.addEventListener("click", () =>
+      store.dispatch({ type: "TOGGLE_DONE", id: todo.id })
+    );
+    el.append(btn, deleteBtn);
+    todosContainer.appendChild(el);
+  });
+}
+form.addEventListener("submit", handleSubmit);
 
 store.subscribe(() => {
-  const val = store.getState();
-  counter.innerText = val.count;
+  createUi();
 });
