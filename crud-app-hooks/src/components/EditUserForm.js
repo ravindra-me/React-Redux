@@ -1,16 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { context } from "./App";
 
-const EditUserForm = (props) => {
+const EditUserForm = () => {
   const { currentUser, updateUser, setEditing } = useContext(context);
   const [user, setUser] = useState(currentUser);
   console.log(useContext(context));
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-
     setUser({ ...user, [name]: value });
   };
+
+  useEffect(() => {
+    setUser(currentUser);
+  }, [useContext(context)]);
 
   return (
     <form
